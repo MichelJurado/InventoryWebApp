@@ -1,0 +1,32 @@
+﻿@using System.ComponentModel.DataAnnotations;
+@using InventoryWebApp.Data
+@using Microsoft.Data.SqlClient
+@inject FruitDapperService fruitservice
+@inject IJSRuntime js
+@page "/FruitCheckout/{CurrentID}"
+
+<h3>FruitCheckout</h3>
+
+<h1>PicOfAFruit</h1>
+
+<p>Fruit Description, tastes great</p>
+
+<button @onclick="UpdateF">Buy</button>
+
+@code {
+
+    [Parameter]
+    public string CurrentID { get; set; }
+    FruitsAvailable fruits = new FruitsAvailable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        fruits = await Task.Run(() => fruitservice.GetFruitsById(Convert.ToInt32(CurrentID)));
+    }
+
+    protected async void UpdateF()
+    {
+        fruitservice.UpdateFruits(fruits);
+        await js.InvokeVoidAsync("alert", "Purchase Complete");
+    }
+}

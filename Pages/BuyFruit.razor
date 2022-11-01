@@ -1,0 +1,72 @@
+﻿@using System.ComponentModel.DataAnnotations;
+@using InventoryWebApp.Data
+@using Microsoft.Data.SqlClient
+@inject FruitDapperService fruitservice
+@page "/buyfruit"
+
+<h3>BuyFruit</h3>
+
+@if(fruitsA == null)
+{
+    <p>Loading</p>
+}
+else
+{
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fruit</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var i in fruitsA)
+                {
+                    <tr>
+                        <td><img src="@convertImageToDisplay(i.Image)" width="200px;"/></td>
+                        <td>@i.Fruit</td>
+                        <td>@i.Quantity</td>
+                        <td>@i.Price</td>
+                        <td>
+                            <a href="FruitCheckout/@i.ID">Buy</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    IEnumerable<FruitsAvailable> fruitsA;
+
+    protected override async Task OnInitializedAsync()
+    {
+        fruitsA = await fruitservice.GetFruits();
+    }
+
+    /*
+     * need this function to convert the binary into an image
+     * Link to video here https://www.youtube.com/watch?v=C0q5sER8BMU
+     * 
+     * In sql to add an image to a column use this example
+     *  UPDATE FruitsAvailable
+        SET Image = (SELECT BulkColumn
+        From Openrowset(Bulk 'C:\Users\mjurado\Downloads\Red_Apple.jpg',Single_Blob) as img)
+        WHERE FruitsAvailable.ID = 1;
+     */
+    string convertImageToDisplay(byte[] image)
+    {
+        if(image!= null)
+        {
+            var base64 = Convert.ToBase64String(image);
+            var fs = string.Format("data:image/jpg;base64,{0}", base64);
+            return fs;
+        }
+        return "";
+    }
+    
+    
+}
