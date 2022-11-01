@@ -13,7 +13,7 @@ namespace InventoryWebApp.Data
 
         public FruitDapperService()
         {
-            connectionString = @"Data Source=localhost; Integrated Security=true; initial catalog=InventoryWebApp; user id=LibCommResourcesUser; password=Government1;";
+            connectionString = @"";
         }
 
         public IDbConnection Connection
